@@ -94,9 +94,26 @@ public class ProductServlet extends HttpServlet {
 		}
 		else {
 			String keyword = request.getParameter("keyword");
-			List<Product> products = productService.searchProducts(keyword);
+			String pageParam = request.getParameter("page");
+			
+			int page = 1;
+			
+			if(pageParam != null) page = Integer.parseInt(pageParam);
+			
+			List<Product> products = productService.searchProducts(keyword, page);
+			
+			if(keyword == null){
+			    keyword="";
+			}
+			
+			int totalPages = productService.getTotalPages(keyword);
+
+
+			request.setAttribute("totalPages", totalPages);
 
 		    request.setAttribute("products", products);
+			request.setAttribute("currentPage", page);
+			request.setAttribute("keyword", keyword);
 
 		    request.getRequestDispatcher("/products.jsp")
 		           .forward(request, response);

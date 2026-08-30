@@ -42,12 +42,31 @@ public class ProductService {
 		}
 	}
 	
-	public List<Product> searchProducts(String keyword){
+	public List<Product> searchProducts(String keyword, int page){
+		int pageSize = 6;
+		int offset = (page - 1) * pageSize;
+		
 		if(keyword == null || keyword.trim().isEmpty()) {
-			return productDAO.findAll();
+			return productDAO.findProducts(offset, pageSize);
 		}
 		
-		return productDAO.searchByName(keyword);
+		return productDAO.searchByName(keyword, offset, pageSize);
 	}
+	
+	public int getTotalPages(String keyword){
+
+	    int pageSize = 6;
+
+
+	    long totalProducts =
+	            productDAO.countProducts(keyword);
+
+
+	    return (int)Math.ceil(
+	            (double) totalProducts / pageSize
+	    );
+
+	}
+
 	
 }

@@ -114,11 +114,11 @@ public class ProductDAO implements Dao<Product, Integer> {
 		
 	}
 	
-	public List<Product> searchByName(String keyword){
+	public List<Product> searchByName(String keyword, int offset, int limit){
 		List<Product> list = new ArrayList<Product>();
 	    Session session = null;
 
-	    try {
+	    try {	
 
 	        session =
 	        HibernateUtil.getSessionFactory()
@@ -127,6 +127,8 @@ public class ProductDAO implements Dao<Product, Integer> {
 
 	        list = session.createQuery("FROM Product p WHERE p.name LIKE :keyword", Product.class)
 	        	.setParameter("keyword", "%" + keyword + "%")
+	        	.setFirstResult(offset)
+	        	.setMaxResults(limit)
 	        	.getResultList();
 
 
@@ -138,6 +140,74 @@ public class ProductDAO implements Dao<Product, Integer> {
 
 	    }
 	    return list;
+	}
+	
+	public List<Product> findProducts(int offset, int limit){
+		List<Product> list = new ArrayList<Product>();
+	    Session session = null;
+
+	    try {	
+
+	        session =
+	        HibernateUtil.getSessionFactory()
+	        .openSession();
+
+
+	        list = session.createQuery("FROM Product", Product.class).setFirstResult(offset).setMaxResults(limit).getResultList();
+
+	    } finally {
+
+	        if(session != null){
+	            session.close();
+	        }
+
+	    }
+	    return list;
+	}
+	
+	public long countProducts(String keyword){
+
+	    Session session = null;
+
+	    try {
+
+	        session = HibernateUtil
+	                .getSessionFactory()
+	                .openSession();
+
+
+	        if(keyword == null || keyword.trim().isEmpty()){
+
+	            return session
+	                    .createQuery(
+	                    "SELECT COUNT(p) FROM Product p",
+	                    Long.class
+	                    )
+	                    .getSingleResult();
+
+	        }
+
+
+	        return session
+	                .createQuery(
+	                "SELECT COUNT(p) FROM Product p WHERE p.name LIKE :keyword",
+	                Long.class
+	                )
+	                .setParameter(
+	                    "keyword",
+	                    "%" + keyword + "%"
+	                )
+	                .getSingleResult();
+
+
+	    } finally {
+
+	        if(session != null){
+	            session.close();
+	        }
+
+	    }
+
 	}
 	
 

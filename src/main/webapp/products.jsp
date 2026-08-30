@@ -66,6 +66,9 @@
             && loggedInUser.getRole() == Role.ADMIN) { %>
 
             <a href="AdminOrderServlet">Customers' Orders</a>
+            <a href="ProductServlet?action=create">
+                Add new products
+            </a>
 
         <% } %>
         
@@ -185,6 +188,76 @@
 <%
     }
 %>
+
+<!-- Pagination -->
+
+<div class="pagination">
+
+
+<%
+
+Integer currentPage =
+    (Integer) request.getAttribute("currentPage");
+
+
+Integer totalPages =
+    (Integer) request.getAttribute("totalPages");
+
+
+String keyword =
+    (String) request.getAttribute("keyword");
+
+if(currentPage == null){
+    currentPage = 1;
+}
+
+
+if(totalPages == null){
+    totalPages = 1;
+}
+
+if(keyword == null){
+    keyword="";
+}
+
+
+for(int i = 1; i <= totalPages; i++){
+
+%>
+
+
+<a href="ProductServlet?keyword=<%= keyword %>&page=<%= i %>"
+
+<%
+
+if(i == currentPage){
+
+%>
+
+style="font-weight:bold;"
+
+<%
+
+}
+
+%>
+
+>
+
+<%= i %>
+
+</a>
+
+
+<%
+
+}
+
+%>
+
+
+</div>
+
 
 <script>
     setTimeout(function() {
