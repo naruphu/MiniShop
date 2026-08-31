@@ -45,3 +45,21 @@ body {
     gap: 15px;
     align-items: center;
 }
+.pagination {
+    margin-top: 30px;
+    text-align: center;
+}
+
+
+.pagination a {
+    padding: 8px 12px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+}
+
+
+.pagination a:hover {
+    background: black;
+    color:white;
+}

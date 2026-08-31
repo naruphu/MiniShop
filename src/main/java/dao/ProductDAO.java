@@ -114,7 +114,35 @@ public class ProductDAO implements Dao<Product, Integer> {
 		
 	}
 	
-	public List<Product> searchByName(String keyword, int offset, int limit){
+//	public List<Product> searchByName(String keyword, int offset, int limit){
+//		List<Product> list = new ArrayList<Product>();
+//	    Session session = null;
+//
+//	    try {	
+//
+//	        session =
+//	        HibernateUtil.getSessionFactory()
+//	        .openSession();
+//
+//
+//	        list = session.createQuery("FROM Product p WHERE p.name LIKE :keyword", Product.class)
+//	        	.setParameter("keyword", "%" + keyword + "%")
+//	        	.setFirstResult(offset)
+//	        	.setMaxResults(limit)
+//	        	.getResultList();
+//
+//
+//	    } finally {
+//
+//	        if(session != null){
+//	            session.close();
+//	        }
+//
+//	    }
+//	    return list;
+//	}
+	
+	public List<Product> findProducts(String keyword, Integer categoryId, int offset, int limit){
 		List<Product> list = new ArrayList<Product>();
 	    Session session = null;
 
@@ -125,13 +153,33 @@ public class ProductDAO implements Dao<Product, Integer> {
 	        .openSession();
 
 
-	        list = session.createQuery("FROM Product p WHERE p.name LIKE :keyword", Product.class)
-	        	.setParameter("keyword", "%" + keyword + "%")
+	        String hql = "FROM Product p WHERE 1=1";
+	        if(keyword != null && !keyword.trim().isEmpty()) {
+	            hql += " AND p.name LIKE :keyword";
+	        }
+
+	        if(categoryId != null) {
+	            hql += " AND p.category.id = :categoryId";
+	        }
+	        
+	        Query query = session.createQuery(hql, Product.class);
+	        
+	        if(keyword != null && !keyword.trim().isEmpty()) {
+	  			hql += " AND p.name LIKE :keyword";
+	  			query.setParameter("keyword", "%" + keyword + "%");
+	       	}
+	        if(categoryId != null) {
+	  			hql += " AND p.category.id = :categoryId";
+	  			query.setParameter("categoryId", categoryId);
+	       	}
+
+	        query
 	        	.setFirstResult(offset)
-	        	.setMaxResults(limit)
-	        	.getResultList();
-
-
+	        	.setMaxResults(limit);
+	       
+	        list = query.getResultList();
+	        
+	        
 	    } finally {
 
 	        if(session != null){
@@ -142,30 +190,7 @@ public class ProductDAO implements Dao<Product, Integer> {
 	    return list;
 	}
 	
-	public List<Product> findProducts(int offset, int limit){
-		List<Product> list = new ArrayList<Product>();
-	    Session session = null;
-
-	    try {	
-
-	        session =
-	        HibernateUtil.getSessionFactory()
-	        .openSession();
-
-
-	        list = session.createQuery("FROM Product", Product.class).setFirstResult(offset).setMaxResults(limit).getResultList();
-
-	    } finally {
-
-	        if(session != null){
-	            session.close();
-	        }
-
-	    }
-	    return list;
-	}
-	
-	public long countProducts(String keyword){
+	public long countProducts(String keyword, Integer categoryId){
 
 	    Session session = null;
 
@@ -175,30 +200,34 @@ public class ProductDAO implements Dao<Product, Integer> {
 	                .getSessionFactory()
 	                .openSession();
 
-
-	        if(keyword == null || keyword.trim().isEmpty()){
-
-	            return session
-	                    .createQuery(
-	                    "SELECT COUNT(p) FROM Product p",
-	                    Long.class
-	                    )
-	                    .getSingleResult();
-
+	        String hql = "SELECT COUNT(p) FROM Product p WHERE 1=1";
+	        
+	        if(keyword != null || !keyword.trim().isEmpty()){
+	        	hql += " AND p.name LIKE :keyword";
 	        }
+	        
+	        if (categoryId != null) {
+	            hql += " AND p.category.id = :categoryId";
+	        }
+	        
+	        Query query =
+	                session.createQuery(hql, Long.class);
 
-
-	        return session
-	                .createQuery(
-	                "SELECT COUNT(p) FROM Product p WHERE p.name LIKE :keyword",
-	                Long.class
-	                )
-	                .setParameter(
+	        if (keyword != null || !keyword.trim().isEmpty()) {
+	            query.setParameter(
 	                    "keyword",
 	                    "%" + keyword + "%"
-	                )
-	                .getSingleResult();
+	            );
+	        }
 
+	        if (categoryId != null) {
+	            query.setParameter(
+	                    "categoryId",
+	                    categoryId
+	            );
+	        }
+
+	        return (long) query.getSingleResult();
 
 	    } finally {
 

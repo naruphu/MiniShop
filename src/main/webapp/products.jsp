@@ -1,3 +1,4 @@
+<%@page import="model.Category"%>
 <%@page import="model.Role"%>
 <%@page import="model.User"%>
 <%@page import="model.Product"%>
@@ -39,6 +40,28 @@
             		value="${param.keyword}"
             		placeholder="Search product..."
             	>
+            	
+            	<select name = "categoryId">
+            		<option value = "">All Categories</option>
+            		<%
+            			List<Category> categories = (List<Category>) request.getAttribute("categories");
+            		
+            			Integer selectedCategoryId =
+            		        (Integer) request.getAttribute("categoryId");
+            			
+            			for(Category category : categories){
+            		%>
+            			<option 
+            				value = "<%= category.getId()%>"
+            				<%= selectedCategoryId != null && category.getId() == selectedCategoryId ? "selected" :  "" %>
+            			>
+            				<%= category.getName() %>
+            			
+            			</option>
+            			
+            		<% } %>
+            	
+            	</select>
             		
             	<button type = "submit">
             		Search
@@ -207,6 +230,9 @@ Integer totalPages =
 String keyword =
     (String) request.getAttribute("keyword");
 
+Integer categoryId =
+	(Integer) request.getAttribute("categoryId");
+
 if(currentPage == null){
     currentPage = 1;
 }
@@ -226,7 +252,9 @@ for(int i = 1; i <= totalPages; i++){
 %>
 
 
-<a href="ProductServlet?keyword=<%= keyword %>&page=<%= i %>"
+<a href="ProductServlet?page=<%= i %>&keyword=<%= keyword == null ? "" : keyword %>&categoryId=<%= categoryId == null ? "" : categoryId %>"
+    <%= i %>
+
 
 <%
 

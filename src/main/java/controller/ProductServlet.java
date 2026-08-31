@@ -25,6 +25,7 @@ import service.ProductService;
 public class ProductServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ProductService productService = new ProductService();
+	private CategoryDAO categoryDAO = new CategoryDAO();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -95,26 +96,40 @@ public class ProductServlet extends HttpServlet {
 		else {
 			String keyword = request.getParameter("keyword");
 			String pageParam = request.getParameter("page");
+			String categoryParam =
+			        request.getParameter("categoryId");
+			Integer categoryId = null;
+
+			if (categoryParam != null &&
+			    !categoryParam.trim().isEmpty()) {
+
+			    categoryId =
+			        Integer.parseInt(categoryParam);
+			}
+			
+			if(keyword == null) {
+				keyword = "";
+			}
 			
 			int page = 1;
 			
 			if(pageParam != null) page = Integer.parseInt(pageParam);
 			
-			List<Product> products = productService.searchProducts(keyword, page);
+			List<Product> products = productService.searchProducts(keyword, categoryId, page);
 			
-			if(keyword == null){
-			    keyword="";
-			}
 			
-			int totalPages = productService.getTotalPages(keyword);
+			int totalPages = productService.getTotalPages(keyword, categoryId);
+			List<Category> categories = categoryDAO.findAll();
 
+			request.setAttribute("categories", categories);
 
 			request.setAttribute("totalPages", totalPages);
 
 		    request.setAttribute("products", products);
 			request.setAttribute("currentPage", page);
 			request.setAttribute("keyword", keyword);
-
+			request.setAttribute("categoryId", categoryId);
+			
 		    request.getRequestDispatcher("/products.jsp")
 		           .forward(request, response);
 		}

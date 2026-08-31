@@ -42,24 +42,20 @@ public class ProductService {
 		}
 	}
 	
-	public List<Product> searchProducts(String keyword, int page){
+	public List<Product> searchProducts(String keyword, Integer id,  int page){
 		int pageSize = 6;
 		int offset = (page - 1) * pageSize;
-		
-		if(keyword == null || keyword.trim().isEmpty()) {
-			return productDAO.findProducts(offset, pageSize);
-		}
-		
-		return productDAO.searchByName(keyword, offset, pageSize);
+				
+		return productDAO.findProducts(keyword, id, offset, pageSize);
 	}
 	
-	public int getTotalPages(String keyword){
+	public int getTotalPages(String keyword, Integer categoryId){
 
 	    int pageSize = 6;
 
 
 	    long totalProducts =
-	            productDAO.countProducts(keyword);
+	            productDAO.countProducts(keyword, categoryId);
 
 
 	    return (int)Math.ceil(
