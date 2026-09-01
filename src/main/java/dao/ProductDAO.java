@@ -165,11 +165,9 @@ public class ProductDAO implements Dao<Product, Integer> {
 	        Query query = session.createQuery(hql, Product.class);
 	        
 	        if(keyword != null && !keyword.trim().isEmpty()) {
-	  			hql += " AND p.name LIKE :keyword";
 	  			query.setParameter("keyword", "%" + keyword + "%");
 	       	}
 	        if(categoryId != null) {
-	  			hql += " AND p.category.id = :categoryId";
 	  			query.setParameter("categoryId", categoryId);
 	       	}
 

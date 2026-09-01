@@ -44,6 +44,7 @@ Status:
 	<b><%= item.getProduct().getName() %></b>
 </p>
 
+<p>Date: <b><%= order.getOrderDate() %></b></p>
 
 <p>
 	Quantity:
