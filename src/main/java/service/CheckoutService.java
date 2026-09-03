@@ -11,6 +11,8 @@ import org.hibernate.Transaction;
 import dao.CartItemDAO;
 import dao.OrderDAO;
 import dao.OrderItemDAO;
+import exception.AppException;
+import exception.OrderException;
 import model.CartItem;
 import model.Order;
 import model.OrderItem;
@@ -20,9 +22,24 @@ import model.User;
 import util.HibernateUtil;
 
 public class CheckoutService {
-	private CartItemDAO cartItemDAO = new CartItemDAO();
-	private OrderDAO orderDAO = new OrderDAO();
-	private OrderItemDAO orderItemDAO = new OrderItemDAO();
+	private CartItemDAO cartItemDAO;
+
+	private OrderDAO orderDAO;
+
+	private OrderItemDAO orderItemDAO;
+
+
+	public CheckoutService(
+	        CartItemDAO cartItemDAO,
+	        OrderDAO orderDAO,
+	        OrderItemDAO orderItemDAO
+	){
+
+	this.cartItemDAO = cartItemDAO;
+	this.orderDAO = orderDAO;
+	this.orderItemDAO = orderItemDAO;
+
+	}
 	
 	public Order checkout(int userId) {
 		Session session = null;
@@ -35,13 +52,13 @@ public class CheckoutService {
 			User user = session.get(User.class, userId);
 			
 			if(user == null) {
-				throw new IllegalArgumentException("User not found!");
+				throw new OrderException("User not found!");
 			}
 			
 			List<CartItem> cartItems = cartItemDAO.findByUser(userId, session);
 			
 			if(cartItems == null || cartItems.isEmpty()) {
-				throw new IllegalStateException("Cart is empty");
+				throw new OrderException("Cart is empty");
 			}
 			
 			for(CartItem cartItem : cartItems) {
@@ -52,7 +69,7 @@ public class CheckoutService {
 				int stockQuantity = product.getQuantity();
 				
 				if(requestedQuantity > stockQuantity) {
-					throw new IllegalStateException("Not enough stock for product: " + product.getName());
+					throw new OrderException("Not enough stock for product: " + product.getName());
 				}
 			}
 			
@@ -82,7 +99,7 @@ public class CheckoutService {
 			tr.commit();
 			return order;
 			
-		} catch (Exception e) {
+		} catch (AppException e) {
 			if(tr != null) tr.rollback();
 			throw e;
 		}

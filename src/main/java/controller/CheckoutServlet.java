@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import dao.CartItemDAO;
 import dao.OrderDAO;
 import dao.OrderItemDAO;
+import exception.AppException;
 import model.CartItem;
 import model.Order;
 import model.OrderItem;
@@ -23,20 +24,23 @@ import model.OrderStatus;
 import model.Role;
 import model.User;
 import service.CheckoutService;
+import util.AppContext;
+import util.RoleUtils;
 
 /**
  * Servlet implementation class CheckoutServlet
  */
 @WebServlet("/CheckoutServlet")
-public class CheckoutServlet extends HttpServlet {
+public class CheckoutServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
+	private CheckoutService checkOutService;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public CheckoutServlet() {
-        super();
-        // TODO Auto-generated constructor stub
+    	checkOutService = AppContext.getCheckOutService();
+        
     }
 
 	/**
@@ -51,25 +55,19 @@ public class CheckoutServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		OrderDAO orderDAO = new OrderDAO();
-//		CartItemDAO cartItemDAO = new CartItemDAO();
-//		OrderItemDAO orderItemDAO = new OrderItemDAO();
-		
 		
 		// 1. Lấy user đang đăng nhập
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("loggedInUser");
 		
-		if(user == null || user.getRole() == Role.ADMIN) {
+		if(RoleUtils.isAdmin(user)) {
 			response.sendRedirect("login.jsp");
 			return;
 		}
 		
-	
-		CheckoutService checkoutService = new CheckoutService();
 		
 		try {
-			checkoutService.checkout(user.getId());
+			checkOutService.checkout(user.getId());
 			session.setAttribute(
 	                "message",
 	                "Checkout successfully!"
@@ -77,7 +75,7 @@ public class CheckoutServlet extends HttpServlet {
 
 
 	        response.sendRedirect("CartServlet");
-		} catch (Exception e) {
+		} catch (AppException e) {
 			request.getSession().setAttribute(
 			        "message",
 			        e.getMessage()
@@ -85,47 +83,7 @@ public class CheckoutServlet extends HttpServlet {
 
 			    response.sendRedirect("CartServlet");
 		}
-		
-//		// 2. Lấy cart của user
-//		List<CartItem> cartItems = cartItemDAO.findByUser(user.getId());
-//		
-//		if(cartItems == null || cartItems.isEmpty()) {
-//			session.setAttribute("message", "Your cart is empty!");
-//			response.sendRedirect("cart.jsp");
-//			return;
-//		}
-//		// 3. Tính tổng tiền
-//		BigDecimal total = BigDecimal.ZERO;
-//		for(CartItem item : cartItems) {
-//			BigDecimal subtotal = item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-//			total = total.add(subtotal);
-//		}
-//		
-//		// 4. Tạo Order
-//		Order order = new Order(user, new Date(System.currentTimeMillis()), total, OrderStatus.PENDING, user.getAddress());
-//		// 5. Lưu Order
-//		orderDAO.save(order);
-//
-//		// 6. Tạo OrderItem
-//		for(CartItem item : cartItems) {
-//			OrderItem orderItem = new OrderItem(order, item.getProduct(), item.getQuantity(), item.getProduct().getPrice());
-//			 // 7. Lưu OrderItem
-//			orderItemDAO.save(orderItem);
-//		}
-//		
-//		// 8. Xóa cart sau khi mua
-//		for(CartItem item : cartItems) {
-//			cartItemDAO.delete(item);
-//		}
-		
-//		// 9. Redirect
-//		session.setAttribute(
-//                "message",
-//                "Checkout successfully!"
-//        );
-//
-//
-//        response.sendRedirect("CartServlet");
+
 		
 	}
 

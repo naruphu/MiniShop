@@ -17,7 +17,7 @@ import model.User;
  * Servlet implementation class RegisterServlet
  */
 @WebServlet("/RegisterServlet")
-public class RegisterServlet extends HttpServlet {
+public class RegisterServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -45,6 +45,7 @@ public class RegisterServlet extends HttpServlet {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		String confirmPassword = request.getParameter("confirmPassword");
+		
 		if (!password.equals(confirmPassword)) {
 		    response.getWriter().println("Passwords do not match");
 		    return;
@@ -56,10 +57,12 @@ public class RegisterServlet extends HttpServlet {
 		
 		User existingEmail = userDAO.findByEmail(email);
 		User existingUsername = userDAO.findByUsername(username);
+		
 		if(existingEmail != null) {
 			response.getWriter().println("Email already exists");
 			return;
 		}
+		
 		if (existingUsername != null) {
 		    response.getWriter().println("Username already exists");
 		    return;

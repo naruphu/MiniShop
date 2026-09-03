@@ -11,28 +11,30 @@ import javax.servlet.http.HttpServletResponse;
 
 import dao.CartItemDAO;
 import dao.ProductDAO;
+import exception.AppException;
+import exception.CartException;
 import model.CartItem;
 import model.Product;
 import model.Role;
 import model.User;
 import service.CartService;
+import util.AppContext;
+import util.RoleUtils;
 
 /**
  * Servlet implementation class CartServlet
  */
 @WebServlet("/CartServlet")
-public class CartServlet extends HttpServlet {
+public class CartServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-	private CartService cartService = new CartService();
-	private CartItemDAO cartItemDAO = new CartItemDAO();
+	private CartService cartService;
 	private ProductDAO productDAO = new ProductDAO();
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public CartServlet() {
-        super();
-        // TODO Auto-generated constructor stub
+        cartService = AppContext.getCartService();
     }
 
 	/**
@@ -41,7 +43,7 @@ public class CartServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User loggedInUser = (User) request.getSession().getAttribute("loggedInUser");
 		
-		if(loggedInUser == null) {
+		if(!RoleUtils.isLoggedIn(loggedInUser)) {
 			response.sendRedirect("login.jsp");
 			return;
 		}
@@ -61,7 +63,7 @@ public class CartServlet extends HttpServlet {
 		User loggedInUser = (User) request.getSession().getAttribute("loggedInUser"); 
 		// getAttribute() trả về kiểu Object, trong khi biến loggedInUser của bạn là kiểu User.
 		
-		if(loggedInUser == null) {
+		if(!RoleUtils.isLoggedIn(loggedInUser)) {
 			response.sendRedirect("login.jsp");
 			return;
 		}
@@ -72,7 +74,7 @@ public class CartServlet extends HttpServlet {
 		// ví dụ update so với null thì nó chỉ trả false thôi
 		
 		if("update".equals(action)) {
-			if(loggedInUser == null || loggedInUser.getRole() != Role.CUSTOMER) {
+			if(!RoleUtils.isCustomer(loggedInUser)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return;
 			}
@@ -85,14 +87,14 @@ public class CartServlet extends HttpServlet {
 				
 				request.getSession().setAttribute("message", "Update to cart successfully!");
 				
-			} catch (IllegalArgumentException | IllegalStateException e) {
+			} catch (AppException e) {
 				request.getSession().setAttribute("message", e.getMessage());
 			}
 			response.sendRedirect("CartServlet");
 			return;
 			
 		}else if("delete".equals(action)) {
-			if(loggedInUser == null || loggedInUser.getRole() != Role.CUSTOMER) {
+			if(!RoleUtils.isCustomer(loggedInUser)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return;
 			}
@@ -102,14 +104,14 @@ public class CartServlet extends HttpServlet {
 				cartService.removeItem(id);
 				request.getSession().setAttribute("message", "Delete successfully!");
 				
-			} catch (IllegalArgumentException e) {
+			} catch (AppException e) {
 				request.getSession().setAttribute("message", e.getMessage());
 			}
 			response.sendRedirect("CartServlet");
 			return;
 			
 		}else if("add".equals(action)) {
-			if(loggedInUser == null || loggedInUser.getRole() != Role.CUSTOMER) {
+			if(!RoleUtils.isCustomer(loggedInUser)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return;
 			}
@@ -117,17 +119,18 @@ public class CartServlet extends HttpServlet {
 				int productId = Integer.parseInt(request.getParameter("productId"));
 				Product product = productDAO.selectById(productId);
 				
-				if(product == null) throw new IllegalArgumentException("Product not found");
+				if(product == null) throw new CartException("Product not found");
 				
 				cartService.addToCart(loggedInUser, product, 1);
 				
 				request.getSession().setAttribute("message", "Add to cart successfully");
 				
-			} catch (IllegalArgumentException | IllegalStateException e) {
+			} catch (AppException e) {
 				request.getSession().setAttribute("message", e.getMessage());
 			}
 			response.sendRedirect("ProductServlet");
 			return;
+			
 		}else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid cart action");
 		}

@@ -12,12 +12,13 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import dao.UserDAO;
 import model.User;
+import util.RoleUtils;
 
 /**
  * Servlet implementation class LoginServlet
  */
 @WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -46,7 +47,7 @@ public class LoginServlet extends HttpServlet {
 		UserDAO userDAO = new UserDAO();
 		User user = userDAO.findByUsername(username);
 		
-		if(user == null) {
+		if(!RoleUtils.isLoggedIn(user)) {
 			response.getWriter().println("Invalid username or password");
 			return;
 		}

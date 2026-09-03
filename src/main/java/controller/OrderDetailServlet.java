@@ -6,15 +6,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.OrderDAO;
 import model.Order;
+import model.User;
+import util.RoleUtils;
 
 /**
  * Servlet implementation class OrderDetailServlet
  */
 @WebServlet("/OrderDetailServlet")
-public class OrderDetailServlet extends HttpServlet {
+public class OrderDetailServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -29,11 +32,27 @@ public class OrderDetailServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+		OrderDAO orderDAO = new OrderDAO();
+		
+		User user = (User) session.getAttribute("loggedInUser");
+		
+		if(!RoleUtils.isLoggedIn(user)) {
+			response.sendRedirect("login.jsp");
+			return;
+		}
+		
 		String id = request.getParameter("orderId");
 		int orderId = Integer.parseInt(id);
 		
-		OrderDAO orderDAO = new OrderDAO();
 		Order order = orderDAO.selectById(orderId);
+		
+		if(RoleUtils.isCustomer(user)) {
+			if(order.getUser().getId() != user.getId()) {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			}
+			return;
+		}
 		
 		request.setAttribute("order", order);
 		request.getRequestDispatcher("order-detail.jsp").forward(request, response);
