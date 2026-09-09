@@ -7,31 +7,32 @@
     <session-factory>
 
         <property name="hibernate.connection.driver_class">
-            com.mysql.cj.jdbc.Driver
-        </property>
+    com.mysql.cj.jdbc.Driver
+</property>
 
-        <property name="hibernate.connection.url">
-            jdbc:mysql://localhost:3306/minishop
-        </property>
+<property name="hibernate.connection.url">
+jdbc:mysql://altaria.proxy.rlwy.net:44173/railway?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true
+</property>	
 
-        <property name="hibernate.connection.username">
-            root
-        </property>
+<property name="hibernate.connection.username">
+    root
+</property>
 
-        <property name="hibernate.connection.password">
-        </property>
+<property name="hibernate.connection.password">
+    vYtURbDGMMICPiJGrHTfdGlNJEuraqUA
+</property>
 
-        <property name="hibernate.dialect">
-            org.hibernate.dialect.MySQL8Dialect
-        </property>
+<property name="hibernate.dialect">
+    org.hibernate.dialect.MySQL8Dialect
+</property>
 
-        <property name="hibernate.hbm2ddl.auto">
-            update
-        </property>
+<property name="hibernate.hbm2ddl.auto">
+    update
+</property>
 
-        <property name="hibernate.show_sql">
-            true
-        </property>
+<property name="hibernate.show_sql">
+    true
+</property>
 
         <mapping class="model.Product"/>
         <mapping class="model.Category"/>

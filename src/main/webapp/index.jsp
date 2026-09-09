@@ -80,13 +80,11 @@ pageEncoding="UTF-8"%>
 	
 	
 	<%
-	
 	List<Category> categories =
-	(List<Category>) request.getAttribute("categories");
+	    (List<Category>) request.getAttribute("categories");
 	
-	
-	for(Category category : categories){
-	
+	if (categories != null) {
+	    for (Category category : categories) {
 	%>
 	
 	
@@ -98,7 +96,7 @@ pageEncoding="UTF-8"%>
 	
 	
 	<%
-	
+	    }
 	}
 	
 	%>
