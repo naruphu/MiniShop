@@ -6,7 +6,7 @@ A backend-focused e-commerce web application built with Java Servlet, JSP, Hiber
 
 ## 🌐 Live Demo
 
-👉 [MiniShop Live Demo](https://minishop-pyrm.onrender.com)
+👉 [MiniShop Live Demo](https://minishop-pyrn.onrender.com)
 
 ## 🔑 Demo Accounts
 
