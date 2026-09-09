@@ -77,6 +77,7 @@ public class RegisterServlet extends BaseServlet {
 		
 		userDAO.save(user);
 		response.getWriter().println("Register successfully");
+		response.sendRedirect("LoginServlet");
 		
 		
 	}
