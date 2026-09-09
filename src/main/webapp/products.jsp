@@ -9,98 +9,43 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
-    
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
+
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Product</title>
-<link rel="stylesheet"
-      href="${pageContext.request.contextPath}/css/style.css?v=2">
-</head>
-<body>
-	<h1>Product List</h1>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Naruphu - Products</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 	
+	<jsp:include page="/WEB-INF/include/head.jsp"/>
+	
+</head>
+
+<body>
+
+<jsp:include page="/WEB-INF/include/navbar.jsp"/>	
+
 <%
-	User loggedInUser = (User) session.getAttribute("loggedInUser");
+    User loggedInUser =
+        (User) session.getAttribute("loggedInUser");
+
+    List<Category> categories =
+        (List<Category>) request.getAttribute("categories");
+
+    Integer selectedCategoryId =
+        (Integer) request.getAttribute("categoryId");
 %>
 
-<div class="top-bar">
 
-    <div class="left-side">
-        <% if (loggedInUser != null) { %>
-            <span>
-                Welcome, <%= loggedInUser.getName() %>
-            </span>
-            <form action="ProductServlet" method="get">
-            	<input 
-            		type = "text"
-            		name = "keyword"
-            		value="${param.keyword}"
-            		placeholder="Search product..."
-            	>
-            	
-            	<select name = "categoryId">
-            		<option value = "">All Categories</option>
-            		<%
-            			List<Category> categories = (List<Category>) request.getAttribute("categories");
-            		
-            			Integer selectedCategoryId =
-            		        (Integer) request.getAttribute("categoryId");
-            			
-            			for(Category category : categories){
-            		%>
-            			<option 
-            				value = "<%= category.getId()%>"
-            				<%= selectedCategoryId != null && category.getId() == selectedCategoryId ? "selected" :  "" %>
-            			>
-            				<%= category.getName() %>
-            			
-            			</option>
-            			
-            		<% } %>
-            	
-            	</select>
-            		
-            	<button type = "submit">
-            		Search
-            	</button>
-            </form>
-        <% } %>
-    </div>
-
-    <div class="right-side">
-        <% if (loggedInUser != null 
-            && loggedInUser.getRole() == Role.CUSTOMER) { %>
-
-            <a href="CartServlet">Cart</a>
-            <a href="OrderServlet">My Orders</a>
-
-        <% } %>
-
-        <% if (loggedInUser != null) { %>
-
-            <a href="LogoutServlet">Logout</a>
-
-        <% } %>
-        
-        <% if (loggedInUser != null 
-            && loggedInUser.getRole() == Role.ADMIN) { %>
-
-            <a href="AdminOrderServlet">Customers' Orders</a>
-            <a href="ProductServlet?action=create">
-                Add new products
-            </a>
-
-        <% } %>
-        
-        
-        
-    </div>
-
-</div>
-    
     <!-- MESSAGE Ở ĐÂY -->
     <%
         String message =
@@ -118,99 +63,201 @@
         }
     %>
 
-</div>
+<form action="ProductServlet"
+      method="get"
+      class="search-section">
 
-<div class="product-list">
+    <div class="search-box">
+
+        <input
+            type="text"
+            name="keyword"
+            value="${param.keyword}"
+            class="search-input"
+            placeholder="Search products...">
+
+        <select name="categoryId"
+                class="category-select">
+
+            <option value="">
+                All Categories
+            </option>
+
+            <%
+                for(Category category : categories) {
+            %>
+
+                <option
+                    value="<%= category.getId() %>"
+                    <%= selectedCategoryId != null
+                        && category.getId() == selectedCategoryId
+                        ? "selected"
+                        : "" %>>
+
+                    <%= category.getName() %>
+
+                </option>
+
+            <%
+                }
+            %>
+
+        </select>
+
+        <button type="submit"
+                class="search-btn">
+
+            Search
+
+        </button>
+
+    </div>
+
+</form>
+    
+<div class="row g-4">
 
 <%
     List<Product> products =
         (List<Product>) request.getAttribute("products");
-
-    for(Product product : products) {
+	if(products != null){
+		for(Product product : products) {
 %>
 
-    <div class="product-card">
+    <div class="col-sm-6 col-lg-4 col-xl-3">
 
-        <h2><%= product.getName() %></h2>
+        <div class="card h-100 shadow-sm border-0">
+	        <a href="ProductServlet?id=<%= product.getId() %>">
+			
+			    <img
+			        src="<%= request.getContextPath() %>/image/<%= product.getImageUrl() %>"
+			        class="card-img-top product-image"
+			        alt="<%= product.getName() %>">
+			
+			</a>
+    
 
-        <p class="price">
-	    	<fmt:formatNumber
-		        value="<%= product.getPrice() %>"
-		        type="number"
-		    /> ₫
-		</p>
-		<p>
-			<b>Category: <%= product.getCategory().getName() %></b>
-		</p>
+            <div class="card-body d-flex flex-column">
 
-
-        <div class="actions">
-
-            <a href="ProductServlet?id=<%= product.getId() %>">
-                View Detail
-            </a>
-            
-            <!-- Chỉ ADMIN -->
-            <%
-            	if(loggedInUser != null && loggedInUser.getRole() == Role.ADMIN){
-            %>
-
-            <a href="ProductServlet?action=edit&id=<%= product.getId() %>">
-                Edit
-            </a>
-
-	            <form action="ProductServlet"
-	                  method="post"
-	                  style="display:inline;">
-	
-	                <input type="hidden"
-	                       name="action"
-	                       value="delete">
-	
-	                <input type="hidden"
-	                       name="id"
-	                       value="<%= product.getId() %>">
-	                <button type="submit">Delete</button>
-	          	</form>
-           <%
-            	}
-           %>
-           
-           <!-- Chỉ CUSTOMER -->
-		    <%
-		        if (loggedInUser != null
-		            && loggedInUser.getRole() == Role.CUSTOMER) {
-		    %>
-		
-		        <form action="CartServlet" method="post">
-		        	<input type="hidden"
-				           name="action"
-				           value="add">
-
-				    <input type="hidden"
-				           name="productId"
-				           value="<%= product.getId() %>">
+                <h5 class="card-title fw-bold">
 				
-				    <button type="submit">
-				        Add to Cart
-				    </button>
+				    <a href="ProductServlet?id=<%= product.getId() %>"
+				       class="product-name-link">
 				
-				</form>
+				        <%= product.getName() %>
+				
+				    </a>
+				
+				</h5>
 
-		
-		    <%
-		        }
-		    %>     
+                <p class="text-muted mb-2">
+                    <%= product.getCategory().getName() %>
+                </p>
 
+                <p class="fs-5 fw-bold text-primary">
+                    <fmt:formatNumber
+                        value="<%= product.getPrice() %>"
+                        type="number"
+                    /> ₫
+                </p>
 
+                <div class="mt-auto d-flex gap-2 flex-wrap">
+
+                    <a
+                        href="ProductServlet?id=<%= product.getId() %>"
+                        class="btn btn-outline-primary btn-sm">
+                        View Detail
+                    </a>
+
+                    <%
+					if(loggedInUser != null 
+					&& loggedInUser.getRole() == Role.ADMIN){
+					%>
+
+                        <a
+                            href="ProductServlet?action=edit&id=<%= product.getId() %>"
+                            class="btn btn-warning btn-sm">
+                            Edit
+                        </a>
+                        
+						
+						<form action="ProductServlet" method="post">
+							<input type="hidden"
+						       name="action"
+						       value="status">
+						
+							<input type="hidden" 
+							       name="id"
+							       value="<%= product.getId() %>">
+							
+							<input type="hidden"
+							       name="page"
+							       value="<%= request.getAttribute("currentPage") %>">
+
+							<select name="status">
+	
+								<option value="ACTIVE"
+									<%= "ACTIVE".equals(product.getStatus()) ? "selected" : "" %>>
+									ACTIVE
+									</option>
+									
+									
+									<option value="INACTIVE"
+									<%= "INACTIVE".equals(product.getStatus()) ? "selected" : "" %>>
+									INACTIVE
+								</option>
+							
+							</select>
+							
+							<button class="btn btn-danger btn-sm">
+								SAVE
+							</button>
+						
+						</form>
+                    <%  } %>
+
+                    <% if(loggedInUser != null
+                        && loggedInUser.getRole() == Role.CUSTOMER) {
+                    %>
+
+                        <form action="CartServlet"
+                              method="post">
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="add">
+                          	<input type="hidden"
+							       name="page"
+							       value="<%= request.getAttribute("currentPage") %>">
+
+                            <input
+                                type="hidden"
+                                name="productId"
+                                value="<%= product.getId() %>">
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-sm">
+                                Add to Cart
+                            </button>
+
+                        </form>
+
+                    <% } %>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
 <%
-    }
+		}
+}
 %>
+</div>
 
 <!-- Pagination -->
 

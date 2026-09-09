@@ -9,73 +9,152 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Order Detail</title>
+	
+	<meta charset="UTF-8">
+	<title>Order Detail</title>
+	
+	<jsp:include page="/WEB-INF/include/head.jsp"/>
+	
 </head>
 <body>
-<h1>Order Detail</h1>
-<%
+	<jsp:include page="/WEB-INF/include/navbar.jsp"/>
+
+	<div class="order-detail-container">
+	
+	
+	<%
+	
 	Order order = (Order) request.getAttribute("order");
-%>
-
-
-<p>
-Order ID:
-<b><%= order.getId() %></b>
-</p>
-
-
-<p>
-Status:
-<b><%= order.getStatus() %></b>
-</p>
-
-
-<h2>Products</h2>
-
-
-<%
+	
+	%>
+	
+	
+	<div class="order-detail-card">
+	
+	
+	<h1>
+	Order #<%= order.getId() %>
+	</h1>
+	
+	
+	<p class="order-status">
+	
+	Status:
+	
+	<span>
+	<%= order.getStatus() %>
+	</span>
+	
+	</p>
+	
+	
+	<p>
+	Date:
+	
+	<b>
+	<%= order.getOrderDate() %>
+	</b>
+	
+	</p>
+	
+	
+	
+	<h2>
+	Products
+	</h2>
+	
+	
+	
+	<%
+	
 	for(OrderItem item : order.getOrderItems()){
-%>
-
-
-<p>
-	Product:
-	<b><%= item.getProduct().getName() %></b>
-</p>
-
-<p>Date: <b><%= order.getOrderDate() %></b></p>
-
-<p>
+	
+	%>
+	
+	
+	<div class="order-product">
+	
+	
+	<div>
+	
+	
+	<h3>
+	<%= item.getProduct().getName() %>
+	</h3>
+	
+	
+	<p>
 	Quantity:
-	<b><%= item.getQuantity() %></b>
-</p>
-
-
-<p>
-	Price:
-	<b><fmt:formatNumber
-		        value="<%= item.getPrice() %>"
-		        type="number"
-		    /> ₫</b>
-</p>
-
-
-<hr>
-
-
-<%
-}
-%>
-
-
-<h2>
+	
+	<b>
+	<%= item.getQuantity() %>
+	</b>
+	
+	</p>
+	
+	
+	</div>
+	
+	
+	
+	<div class="product-price">
+	
+	
+	<fmt:formatNumber
+	value="<%= item.getPrice() %>"
+	type="number"
+	/>
+	
+	₫
+	
+	
+	</div>
+	
+	
+	
+	</div>
+	
+	
+	
+	<%
+	
+	}
+	
+	%>
+	
+	
+	<div class="order-total">
+	
+	
 	Total:
-	<b><fmt:formatNumber
-		        value="<%= order.getTotal() %>"
-		        type="number"
-		    /> ₫</b>
-</h2>
+	
+	<strong>
+	
+	<fmt:formatNumber
+	value="<%= order.getTotal() %>"
+	type="number"
+	/>
+	
+	₫
+	
+	</strong>
+	
+	
+	</div>
+	
+	<a href="OrderServlet"
+	   class="detail-btn">
+	
+	Back
+	
+	</a>
+	
+	
+	</div>
+	
+	
+	</div>
+	
 
 
 </body>

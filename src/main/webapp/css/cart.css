@@ -1,0 +1,254 @@
+@charset "UTF-8";
+.cart-container{
+    max-width:1000px;
+    margin:50px auto;
+}
+
+
+.cart-card{
+
+    display:flex;
+    align-items:center;
+    gap:30px;
+
+    background:#111820;
+
+    border:1px solid #25303b;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    margin-bottom:20px;
+}
+
+
+.cart-image{
+
+    width:130px;
+    height:160px;
+
+    object-fit:cover;
+
+    border-radius:10px;
+
+}
+
+
+.cart-info{
+    flex:1;
+}
+
+
+.cart-name{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:white;
+
+}
+
+
+.cart-price{
+
+    color:#8b5cf6;
+
+    font-size:20px;
+
+}
+
+
+.cart-action input{
+
+    width:70px;
+
+    background:#111820;
+
+    color:white;
+
+    border:1px solid #333;
+
+}
+
+
+.remove-btn{
+
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 15px;
+
+    border-radius:8px;
+
+}
+
+
+.checkout-btn{
+
+    background:#8b5cf6;
+
+    color:white;
+
+    padding:12px 25px;
+
+    border-radius:10px;
+
+    border:none;
+
+}
+
+.cart-title{
+
+text-align:center;
+
+margin:40px 0;
+
+font-size:32px;
+
+}
+
+
+
+.cart-name{
+
+color:#f1f5f9;
+
+}
+
+
+
+.cart-price{
+
+color:#a78bfa;
+
+font-size:20px;
+
+font-weight:bold;
+
+}
+
+
+
+.cart-actions{
+
+display:flex;
+
+gap:15px;
+
+align-items:center;
+
+}
+
+
+
+.quantity-input{
+
+width:70px;
+
+background:#111820;
+
+color:white;
+
+border:1px solid #25303b;
+
+padding:8px;
+
+border-radius:8px;
+
+}
+
+
+
+.update-btn{
+
+background:#8b5cf6;
+
+color:white;
+
+border:none;
+
+padding:8px 15px;
+
+border-radius:8px;
+
+}
+
+
+
+.remove-btn{
+
+background:#ef4444;
+
+color:white;
+
+border:none;
+
+padding:8px 15px;
+
+border-radius:8px;
+
+}
+
+
+
+.cart-total{
+
+margin-top:40px;
+
+font-size:24px;
+
+text-align:right;
+
+color:white;
+
+}
+
+
+.cart-total span{
+
+color:#a78bfa;
+
+font-weight:bold;
+
+}
+
+
+
+.checkout-btn{
+
+margin-top:20px;
+
+float:right;
+
+background:#8b5cf6;
+
+color:white;
+
+border:none;
+
+padding:12px 30px;
+
+border-radius:10px;
+
+font-weight:bold;
+
+}
+
+
+
+.empty-cart{
+
+text-align:center;
+
+font-size:25px;
+
+color:#8b949e;
+
+margin-top:80px;
+
+}

@@ -9,67 +9,139 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>My Orders</title>
+
+	<jsp:include page="/WEB-INF/include/head.jsp"/>
+	
+	<meta charset="UTF-8">
+	<title>My Orders</title>
+	
 </head>
 <body>
-<h1>My Orders</h1>
-<%
-	List<Order> orders = (List<Order>) request.getAttribute("orders");
-	if(orders == null || orders.isEmpty()){
-%>
-<h2>You don't have any orders yet</h2>
-<%
-}else{
-
-for(Order order : orders){
-
-%>
-
-
-<form action="OrderDetailServlet" method="get">
+	<jsp:include page="/WEB-INF/include/navbar.jsp"/>
 	
-    <input 
-        type="hidden"
-        name="orderId"
-        value="<%= order.getId() %>"
-    >
-    
-    <h3>Order #<%= order.getId()%></h3>
-    
-    <p>Date: <b><%= order.getOrderDate() %></b></p>
-    
-    <p>
-	Total:
-	<b><fmt:formatNumber
-		        value="<%= order.getTotal() %>"
-		        type="number"
-		    /> ₫</b>
-	</p>
+	<div class="order-container">
+	
+	
+	<h1>My Orders</h1>
+	
+	
+	<%
+	
+	List<Order> orders = 
+	(List<Order>) request.getAttribute("orders");
+	
+	
+	if(orders == null || orders.isEmpty()){
+	
+	%>
+	
+	
+	<h2 class="empty">
+	You don't have any orders yet
+	</h2>
+	
+	
+	<%
+	
+	}else{
+	
+	
+	for(Order order : orders){
+	
+	%>
+	
+	
+	
+	<div class="order-card">
+	
+	
+	<div class="order-header">
+	
+	
+	<h2>
+	Order #<%= order.getId()%>
+	</h2>
+	
+	
+	<span class="status">
+	<%= order.getStatus()%>
+	</span>
+	
+	
+	</div>
+	
+	
 	
 	<p>
-		Status:
-		<b><%= order.getStatus() %></b>
+	Date:
+	<b>
+	<%= order.getOrderDate()%>
+	</b>
 	</p>
+	
+	
+	
+	<p class="total">
+	
+	
+	Total:
+	
+	<b>
+	
+	<fmt:formatNumber
+	value="<%= order.getTotal()%>"
+	type="number"
+	/>
+	
+	₫
+	
+	</b>
+	
+	
+	</p>
+	
+	
+	
+	
+	<form action="OrderDetailServlet" method="get">
+	
+	
+	<input 
+	type="hidden"
+	name="orderId"
+	value="<%= order.getId()%>"
+	>
+	
+	
+	
+	<button class="detail-btn">
+	
+	View Detail
+	
+	</button>
+	
+	
+	
+	</form>
+	
+	
+	
+	</div>
+	
+	
+	
+	
+	<%
+	
+	}
+	
+	}
+	
+	%>
+	
+	
+	</div>
 
-    <button type="submit">
-        View Detail
-    </button>
-
-</form>
-
-
-<hr>
-
-
-
-<%
-
-}
-
-}
-
-%>
 
 </body>
 </html>

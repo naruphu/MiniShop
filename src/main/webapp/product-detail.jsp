@@ -12,8 +12,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Product Detail</title>
+	<meta charset="UTF-8">
+	<title>Product Detail</title>
+	
+	<link 
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+	
+	<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/style.css?v=5">
+		
 </head>
 <body>
 	<!-- MESSAGE Ở ĐÂY -->
@@ -33,49 +41,124 @@
         }
     %>
     
-    
+    <!-- ----------------------------------------------------------- -->
 	<%
 		Product product = (Product) request.getAttribute("product");
 	%>
-	<h1>Product Detail</h1>
-	<p>ID: <%= product.getId() %></p>
-	<p>Name: <%= product.getName()%></p>
-	<p>
-	    Price:
-	    <fmt:formatNumber
-	        value="<%= product.getPrice() %>"
-	        type="number"
-	    /> ₫
-	</p>
-	<p>
-		Category: <%= product.getCategory().getName() %>
-	</p>
-	<p>Quantity: <%= product.getQuantity()%></p>
+
 	<%
 	User loggedInUser = (User) session.getAttribute("loggedInUser");
 	%>
-	<!-- Chỉ CUSTOMER -->
-		    <%
-		        if (loggedInUser != null
-		            && loggedInUser.getRole() == Role.CUSTOMER) {
-		    %>
-		
-		        <form action="CartServlet" method="post">
+	
+	<jsp:include page="/WEB-INF/include/navbar.jsp"/>
+	
+	<div class="container py-5">
 
-				    <input type="hidden"
-				           name="productId"
-				           value="<%= product.getId() %>">
-				
-				    <button type="submit">
-				        Add to Cart
-				    </button>
-				
-				</form>
+    <div class="card shadow-lg border-0">
 
-		
-		    <%
-		        }
-		    %>
+        <div class="row g-0">
+
+            <!-- Image -->
+            <div class="col-md-6">
+
+                <img 
+                src="${pageContext.request.contextPath}/image/<%=product.getImageUrl()%>"
+                class="img-fluid rounded-start product-detail-image">
+
+            </div>
+
+
+            <!-- Info -->
+            <div class="col-md-6">
+
+                <div class="card-body">
+
+                    <h1 class="product-title">
+					    <%= product.getName() %>
+					</h1>
+
+
+                    <p class="text-muted">
+                        Category:
+                        <%= product.getCategory().getName() %>
+                    </p>
+
+
+                    <h3 class="text-primary">
+
+                        <fmt:formatNumber
+                        value="<%= product.getPrice() %>"
+                        type="number"
+                        />
+
+                        ₫
+
+                    </h3>
+
+
+                    <p>
+					    Available:
+					    <%= product.getQuantity() %>
+					</p>
+					
+					
+					<%
+					
+					if(loggedInUser != null 
+					&& loggedInUser.getRole() == Role.CUSTOMER){
+					
+					    if(product.getQuantity() > 0){
+					
+					%>
+					
+					<form action="CartServlet" method="post">
+					
+					    <input 
+					    type="hidden"
+					    name="productId"
+					    value="<%=product.getId()%>">
+					
+					    <button 
+					    class="btn btn-primary">
+					        Add to Cart
+					    </button>
+					
+					</form>
+					
+					
+					<%
+					    } else {
+					%>
+					
+					
+					<button 
+					class="btn btn-secondary"
+					disabled>
+					
+					    Out of Stock
+					
+					</button>
+					
+					
+					<%
+					    }
+					
+					}
+					%>
+
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+	
 	<script>
     setTimeout(function() {
         const message = document.getElementById("success-message");

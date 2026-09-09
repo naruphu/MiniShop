@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,6 +29,10 @@ public class Product {
 	private Category category;
 	@OneToMany(mappedBy = "product")
 	private List<CartItem> cartItem = new ArrayList<CartItem>();
+	@Column(name = "image_url")
+	private String imageUrl;
+	@Column(name="status")
+	private String status;
 	
 	// Hibernate cần constructor không tham số để có thể khởi tạo entity khi đọc dữ liệu từ database.
 	public Product() {
@@ -84,6 +89,30 @@ public class Product {
 	@Override
 	public String toString() {
 		return "Product [name=" + name + ", quantity=" + quantity + ", price=" + price + "]";
+	}
+
+	public List<CartItem> getCartItem() {
+		return cartItem;
+	}
+
+	public void setCartItem(List<CartItem> cartItem) {
+		this.cartItem = cartItem;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	

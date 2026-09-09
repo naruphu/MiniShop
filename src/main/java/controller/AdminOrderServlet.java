@@ -49,8 +49,19 @@ public class AdminOrderServlet extends BaseServlet {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
+		
+		String action = request.getParameter("action");
+		
+		if("detail".equals(action)) {
+			int id  = Integer.parseInt(request.getParameter("id"));
+			Order order = orderService.findById(id);
+			request.setAttribute("order", order);
+			request.getRequestDispatcher("admin-order-detail.jsp").forward(request, response);
+			return;
+		}
+		
 
-		List<Order> orders = orderdao.findAll();
+		List<Order> orders = orderService.findAll();
 
 		request.setAttribute("orders", orders);
 		request.getRequestDispatcher("admin-orders.jsp").forward(request, response);
@@ -69,24 +80,19 @@ public class AdminOrderServlet extends BaseServlet {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
+		String orderIdStr = request.getParameter("orderId");
+		String statusStr = request.getParameter("status");
 
-		try {
-			String orderIdStr = request.getParameter("orderId");
-			String statusStr = request.getParameter("status");
+		int orderId = Integer.parseInt(orderIdStr);
 
-			int orderId = Integer.parseInt(orderIdStr);
+		OrderStatus newStatus = OrderStatus.valueOf(statusStr);
+		// convert từ "SHIPPED" thành OrderStatus.SHIPPED
 
-			OrderStatus newStatus = OrderStatus.valueOf(statusStr);
-			// convert từ "SHIPPED" thành OrderStatus.SHIPPED
+		orderService.updateStatus(orderId, newStatus);
 
-			orderService.updateStatus(orderId, newStatus);
+		request.getSession().setAttribute("message", "Update status successfully!");
+		response.sendRedirect("AdminOrderServlet");
 
-			request.getSession().setAttribute("message", "Update status successfully!");
-		} catch (AppException e) {
-			request.getSession().setAttribute("message", e.getMessage());
-		} finally {
-			response.sendRedirect("AdminOrderServlet");
-		}
 
 	}
 

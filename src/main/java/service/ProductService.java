@@ -32,6 +32,35 @@ public class ProductService {
 		productDAO.delete(product);
 	}
 	
+	public List<Product> getProductsForAdmin(String keyword, Integer categoryId, int offset, int limit){
+
+	    return productDAO.findProductsForAdmin(keyword, categoryId, offset, limit);
+
+	}
+	
+	public List<Product> getProductsForCustomer(String keyword, Integer categoryId, int offset, int limit){
+		return productDAO.findActiveProducts(keyword, categoryId, offset, limit);
+	}
+	
+	public Product getProductForCustomer(int id){
+
+	    Product p = productDAO.selectById(id);
+
+	    if(p == null || 
+	    	!"ACTIVE".equals(p.getStatus())){
+	        throw new ProductException("Product not available");
+	    }
+
+	    return p;
+	}
+	
+	
+	public void updateStatus(int id,String status){
+
+	    productDAO.updateStatus(id,status);
+
+	}
+	
 	private void validate(Product product) {
 		if(product.getName() == null || product.getName().trim().isEmpty()) {
 			throw new ProductException("Product name can not be empty");
@@ -48,19 +77,19 @@ public class ProductService {
 	}
 	
 	public List<Product> searchProducts(String keyword, Integer id,  int page){
-		int pageSize = 6;
+		int pageSize = 8;
 		int offset = (page - 1) * pageSize;
 				
-		return productDAO.findProducts(keyword, id, offset, pageSize);
+		return productDAO.findActiveProducts(keyword, id, offset, pageSize);
 	}
 	
 	public int getTotalPages(String keyword, Integer categoryId){
 
-	    int pageSize = 6;
+	    int pageSize = 8;
 
 
 	    long totalProducts =
-	            productDAO.countProducts(keyword, categoryId);
+	            productDAO.countActiveProducts(keyword, categoryId);
 
 
 	    return (int)Math.ceil(
@@ -70,8 +99,7 @@ public class ProductService {
 	}
 	
 	public Product getProductById(int id){
-
-	    return productDAO.selectById(id);
+		return productDAO.selectById(id);
 
 	}
 

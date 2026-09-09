@@ -114,35 +114,48 @@ public class ProductDAO implements Dao<Product, Integer> {
 		
 	}
 	
-//	public List<Product> searchByName(String keyword, int offset, int limit){
-//		List<Product> list = new ArrayList<Product>();
-//	    Session session = null;
-//
-//	    try {	
-//
-//	        session =
-//	        HibernateUtil.getSessionFactory()
-//	        .openSession();
-//
-//
-//	        list = session.createQuery("FROM Product p WHERE p.name LIKE :keyword", Product.class)
-//	        	.setParameter("keyword", "%" + keyword + "%")
-//	        	.setFirstResult(offset)
-//	        	.setMaxResults(limit)
-//	        	.getResultList();
-//
-//
-//	    } finally {
-//
-//	        if(session != null){
-//	            session.close();
-//	        }
-//
-//	    }
-//	    return list;
-//	}
+	public void updateStatus(int id,String status){
+
+	    Session session = null;
+	    Transaction tr = null;
+
+	    try{
+
+	        session = HibernateUtil
+	                .getSessionFactory()
+	                .openSession();
+
+	        tr = session.beginTransaction();
+
+
+	        Product product =
+	            session.find(Product.class,id);
+
+
+	        product.setStatus(status);
+
+
+	        tr.commit();
+
+	    }catch(Exception e){
+
+	        if(tr!=null){
+	            tr.rollback();
+	        }
+
+	        e.printStackTrace();
+
+	    }
+	    finally{
+
+	        if(session!=null)
+	            session.close();
+
+	    }
+
+	}
 	
-	public List<Product> findProducts(String keyword, Integer categoryId, int offset, int limit){
+	public List<Product> findActiveProducts(String keyword, Integer categoryId, int offset, int limit){
 		List<Product> list = new ArrayList<Product>();
 	    Session session = null;
 
@@ -153,7 +166,53 @@ public class ProductDAO implements Dao<Product, Integer> {
 	        .openSession();
 
 
-	        String hql = "FROM Product p WHERE 1=1";
+	        String hql = "FROM Product p WHERE p.status = 'ACTIVE'";
+	        if(keyword != null && !keyword.trim().isEmpty()) {
+	            hql += " AND p.name LIKE :keyword";
+	        }
+
+	        if(categoryId != null) {
+	            hql += " AND p.category.id = :categoryId";
+	        }
+	        
+	        Query query = session.createQuery(hql, Product.class);
+	        
+	        if(keyword != null && !keyword.trim().isEmpty()) {
+	  			query.setParameter("keyword", "%" + keyword + "%");
+	       	}
+	        if(categoryId != null) {
+	  			query.setParameter("categoryId", categoryId);
+	       	}
+
+	        query
+	        	.setFirstResult(offset)
+	        	.setMaxResults(limit);
+	       
+	        list = query.getResultList();
+	        
+	        
+	    } finally {
+
+	        if(session != null){
+	            session.close();
+	        }
+
+	    }
+	    return list;
+	}
+	
+	public List<Product> findProductsForAdmin(String keyword, Integer categoryId, int offset, int limit){
+		List<Product> list = new ArrayList<Product>();
+	    Session session = null;
+
+	    try {	
+
+	        session =
+	        HibernateUtil.getSessionFactory()
+	        .openSession();
+
+
+	        String hql = "FROM Product";
 	        if(keyword != null && !keyword.trim().isEmpty()) {
 	            hql += " AND p.name LIKE :keyword";
 	        }
@@ -200,7 +259,7 @@ public class ProductDAO implements Dao<Product, Integer> {
 
 	        String hql = "SELECT COUNT(p) FROM Product p WHERE 1=1";
 	        
-	        if(keyword != null || !keyword.trim().isEmpty()){
+	        if(keyword != null && !keyword.trim().isEmpty()){
 	        	hql += " AND p.name LIKE :keyword";
 	        }
 	        
@@ -211,7 +270,7 @@ public class ProductDAO implements Dao<Product, Integer> {
 	        Query query =
 	                session.createQuery(hql, Long.class);
 
-	        if (keyword != null || !keyword.trim().isEmpty()) {
+	        if (keyword != null && !keyword.trim().isEmpty()) {
 	            query.setParameter(
 	                    "keyword",
 	                    "%" + keyword + "%"
@@ -237,5 +296,53 @@ public class ProductDAO implements Dao<Product, Integer> {
 
 	}
 	
+	public long countActiveProducts(String keyword, Integer categoryId){
+
+	    Session session = null;
+
+	    try {
+
+	        session = HibernateUtil
+	                .getSessionFactory()
+	                .openSession();
+
+	        String hql = "SELECT COUNT(p) FROM Product p WHERE p.status='ACTIVE'";
+	        
+	        if(keyword != null && !keyword.trim().isEmpty()){
+	        	hql += " AND p.name LIKE :keyword";
+	        }
+	        
+	        if (categoryId != null) {
+	            hql += " AND p.category.id = :categoryId";
+	        }
+	        
+	        Query query =
+	                session.createQuery(hql, Long.class);
+
+	        if (keyword != null && !keyword.trim().isEmpty()) {
+	            query.setParameter(
+	                    "keyword",
+	                    "%" + keyword + "%"
+	            );
+	        }
+
+	        if (categoryId != null) {
+	            query.setParameter(
+	                    "categoryId",
+	                    categoryId
+	            );
+	        }
+
+	        return (long) query.getSingleResult();
+
+	    } finally {
+
+	        if(session != null){
+	            session.close();
+	        }
+
+	    }
+
+	}
 
 }

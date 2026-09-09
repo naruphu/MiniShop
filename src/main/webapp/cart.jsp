@@ -10,11 +10,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>My Cart</title>
+
+	<meta charset="UTF-8">
+	<title>Cart</title>
+	
+	<jsp:include page="/WEB-INF/include/head.jsp"/>
+	
 </head>
 <body>
-<h1>My Cart</h1>
+
+<jsp:include page="/WEB-INF/include/navbar.jsp"/>
+
 <!-- MESSAGE Ở ĐÂY -->
     <%
         String message =
@@ -34,100 +40,240 @@
     
 
 
-
-<%
+	<div class="cart-container">
+	
+	<h1 class="cart-title">
+	Your Shopping Cart
+	</h1>
+	
+	
+	<%
+	
 	BigDecimal total = BigDecimal.ZERO;
-	List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
-	if(cartItems != null && !cartItems.isEmpty()) {
-		for(CartItem item : cartItems){
-			BigDecimal subtotal = item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-			
-			total = total.add(subtotal);
-%>
-
-	<h2>
-		<%= item.getProduct().getName() %>
+	
+	List<CartItem> cartItems =
+	(List<CartItem>) request.getAttribute("cartItems");
+	
+	
+	if(cartItems != null && !cartItems.isEmpty()){
+	
+	
+	for(CartItem item : cartItems){
+	
+	
+	BigDecimal subtotal =
+	item.getProduct()
+	.getPrice()
+	.multiply(
+	BigDecimal.valueOf(item.getQuantity())
+	);
+	
+	
+	total = total.add(subtotal);
+	
+	%>
+	
+	
+	
+	<div class="cart-card">
+	
+	
+	<img 
+	src="${pageContext.request.contextPath}/image/<%=item.getProduct().getImageUrl()%>"
+	class="cart-image">
+	
+	
+	
+	<div class="cart-info">
+	
+	
+	<h2 class="cart-name">
+	
+	<%=item.getProduct().getName()%>
+	
 	</h2>
 	
-	<p class="price">
-	    	<fmt:formatNumber
-		        value="<%= item.getProduct().getPrice() %>"
-		        type="number"
-		    /> ₫
+	
+	
+	<p class="cart-price">
+	
+	<fmt:formatNumber
+	value="<%=item.getProduct().getPrice()%>"
+	type="number"
+	/> ₫
+	
 	</p>
 	
-	<p>
-		Quantity:
-		<%= item.getQuantity() %>
+	
+	
+	<p class="cart-quantity">
+	
+	Quantity:
+	<%=item.getQuantity()%>
+	
 	</p>
 	
+	
+	
 	<p>
-        Subtotal:
-        <fmt:formatNumber
-            value="<%= subtotal %>"
-            type="number"
-        /> ₫
-    </p>
-    
-    <form action="CartServlet" method="post">
-
-    <input type="hidden"
-           name="action"
-           value="update">
-
-    <input type="hidden"
-           name="cartItemId"
-           value="<%= item.getId() %>">
-
-    <input type="number"
-           name="quantity"
-           value="<%= item.getQuantity() %>"
-           min="1">
-
-    <button type="submit">
-        Update
-    </button>
-
-	</form>
+	
+	Subtotal:
+	
+	<fmt:formatNumber
+	value="<%=subtotal%>"
+	type="number"
+	/> ₫
+	
+	
+	</p>
+	
+	
+	<div class="cart-actions">
+	
 	
 	<form action="CartServlet" method="post">
-		<input type = "hidden" name = "action" value = "delete">
-		<input type = "hidden" name = "cartItemId" value = "<%= item.getId()%>">
-		<button type = "submit">Remove</button>
-	</form>	
-	<hr>
-
-<%
-		}
+	
+	
+	<input type="hidden"
+	name="action"
+	value="update">
+	
+	
+	<input type="hidden"
+	name="cartItemId"
+	value="<%=item.getId()%>">
+	
+	
+	
+	<input 
+	class="quantity-input"
+	type="number"
+	name="quantity"
+	value="<%=item.getQuantity()%>"
+	min="1">
+	
+	
+	<button class="update-btn">
+	
+	Update
+	
+	</button>
+	
+	
+	</form>
+	
+	
+	
+	
+	<form action="CartServlet" method="post">
+	
+	
+	<input type="hidden"
+	name="action"
+	value="delete">
+	
+	
+	<input type="hidden"
+	name="cartItemId"
+	value="<%=item.getId()%>">
+	
+	
+	<button class="remove-btn">
+	
+	Remove
+	
+	</button>
+	
+	
+	</form>
+	
+	
+	</div>
+	
+	
+	</div>
+	
+	
+	</div>
+	
+	
+	
+	<%
+	
+	
 	}
+	
+	}
+	
 	else {
-%>
-<h2>Your cart is empty</h2>
+	
+	
+	%>
+	
+	
+	<div class="empty-cart">
+	
+	Your cart is empty
+	
+	</div>
+	
+	
+	<%
+	
+	}
+	
+	%>
+	
+	
+	
+	<div class="cart-total">
+	
+	Total:
+	
+	<span>
+	
+	<fmt:formatNumber
+	value="<%=total%>"
+	type="number"
+	/> ₫
+	
+	</span>
+	
+	
+	</div>
+	
+	
+	
+	<%
+	
+	if(cartItems != null && !cartItems.isEmpty()){
+	
+	%>
+	
+	
+	<form action="CheckoutServlet" method="post">
+	
+	
+	<button class="checkout-btn">
+	
+	Checkout
+	
+	</button>
+	
+	
+	</form>
+	
+	
+	<%
+	
+	}
+	
+	%>
+	
+	
+	</div>
 
-<%
-}
-%>
 
-<h2>
-    Total:
-    <fmt:formatNumber
-        value="<%= total %>"
-        type="number"
-    /> ₫
-</h2>
-
-<hr>
-<%
-if(cartItems != null && !cartItems.isEmpty()){
-%>
-
-<form action="CheckoutServlet" method="post">
-    <button type="submit">Checkout</button>
-</form>
-
-<%
-}
-%>
    <script>
     setTimeout(function() {
         const message = document.getElementById("success-message");

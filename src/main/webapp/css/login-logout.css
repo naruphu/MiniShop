@@ -1,0 +1,15 @@
+@charset "UTF-8";
+.nav-btn{
+    color:white;
+    border:1px solid #25303b;
+    padding:8px 15px;
+    border-radius:8px;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+
+.nav-btn:hover{
+    background:#8b5cf6;
+    color:white;
+}

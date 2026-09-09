@@ -21,7 +21,16 @@ public class OrderService {
 	}
 	
 	public List<Order> findByUser(int id) {
-		return orderDAO.findByUser(id);	}
+		return orderDAO.findByUser(id);	
+	}
+	
+	public Order findById(int id) {
+		return orderDAO.selectById(id);
+	}
+	
+	public List<Order> findAll() {
+		return orderDAO.findAll();
+	}
 	
 	
 	public void updateStatus(int orderId, OrderStatus newStatus) {

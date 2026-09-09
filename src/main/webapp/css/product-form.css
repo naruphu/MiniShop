@@ -1,0 +1,124 @@
+@charset "UTF-8";
+/* EDIT PRODUCT */
+.product-form-container{
+
+width:500px;
+
+margin:60px auto;
+
+background:#111820;
+
+border:1px solid #25303b;
+
+border-radius:16px;
+
+padding:35px;
+
+}
+
+
+
+.product-form-container h1{
+
+color:white;
+
+margin-bottom:30px;
+
+font-size:28px;
+
+}
+
+
+
+.product-form{
+
+display:flex;
+
+flex-direction:column;
+
+gap:20px;
+
+}
+
+
+
+.form-group{
+
+display:flex;
+
+flex-direction:column;
+
+gap:8px;
+
+}
+
+
+
+.form-group label{
+
+color:#aaa;
+
+font-size:14px;
+
+}
+
+
+
+.form-group input,
+.form-group select{
+
+
+background:#0b1016;
+
+color:white;
+
+border:1px solid #25303b;
+
+padding:12px 15px;
+
+border-radius:8px;
+
+font-size:15px;
+
+}
+
+
+
+.form-group input:focus,
+.form-group select:focus{
+
+outline:none;
+
+border-color:#8b5cf6;
+
+}
+
+
+
+.save-btn{
+
+margin-top:10px;
+
+background:#8b5cf6;
+
+color:white;
+
+border:none;
+
+padding:12px;
+
+border-radius:10px;
+
+font-size:15px;
+
+cursor:pointer;
+
+}
+
+
+
+.save-btn:hover{
+
+background:#7c3aed;
+
+}

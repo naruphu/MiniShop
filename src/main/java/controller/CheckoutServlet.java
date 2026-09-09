@@ -65,25 +65,12 @@ public class CheckoutServlet extends BaseServlet {
 			return;
 		}
 		
+		checkOutService.checkout(user.getId());
+		session.setAttribute("message", "Checkout successfully!");
+
+
+        response.sendRedirect("CartServlet");
 		
-		try {
-			checkOutService.checkout(user.getId());
-			session.setAttribute(
-	                "message",
-	                "Checkout successfully!"
-	        );
-
-
-	        response.sendRedirect("CartServlet");
-		} catch (AppException e) {
-			request.getSession().setAttribute(
-			        "message",
-			        e.getMessage()
-			    );
-
-			    response.sendRedirect("CartServlet");
-		}
-
 		
 	}
 

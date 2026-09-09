@@ -50,8 +50,8 @@ public class OrderDetailServlet extends BaseServlet {
 		if(RoleUtils.isCustomer(user)) {
 			if(order.getUser().getId() != user.getId()) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return;
 			}
-			return;
 		}
 		
 		request.setAttribute("order", order);

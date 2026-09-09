@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.CartItemDAO;
 import dao.ProductDAO;
@@ -68,6 +69,8 @@ public class CartServlet extends BaseServlet {
 			return;
 		}
 		
+		HttpSession session = request.getSession();
+		
 		String action = request.getParameter("action");
 		// if(action.equals("update")) là sai vì nếu ko truyền vô action thì nó là NULL
 		// mà null đi so với cái chuỗi thì suy ra nullpointer, phải làm ngược lại
@@ -79,17 +82,12 @@ public class CartServlet extends BaseServlet {
 				return;
 			}
 			
-			try {
-				int id = Integer.parseInt(request.getParameter("cartItemId"));
-				int quantity = Integer.parseInt(request.getParameter("quantity"));
-				
-				cartService.updateQuantity(id, quantity);
-				
-				request.getSession().setAttribute("message", "Update to cart successfully!");
-				
-			} catch (AppException e) {
-				request.getSession().setAttribute("message", e.getMessage());
-			}
+			int id = Integer.parseInt(request.getParameter("cartItemId"));
+			int quantity = Integer.parseInt(request.getParameter("quantity"));
+			
+			cartService.updateQuantity(id, quantity);
+			
+			request.getSession().setAttribute("message", "Update to cart successfully!");
 			response.sendRedirect("CartServlet");
 			return;
 			
@@ -99,14 +97,10 @@ public class CartServlet extends BaseServlet {
 				return;
 			}
 			
-			try {
-				int id = Integer.parseInt(request.getParameter("cartItemId"));
-				cartService.removeItem(id);
-				request.getSession().setAttribute("message", "Delete successfully!");
-				
-			} catch (AppException e) {
-				request.getSession().setAttribute("message", e.getMessage());
-			}
+			int id = Integer.parseInt(request.getParameter("cartItemId"));
+			cartService.removeItem(id);
+			request.getSession().setAttribute("message", "Delete successfully!");
+			
 			response.sendRedirect("CartServlet");
 			return;
 			
@@ -115,20 +109,26 @@ public class CartServlet extends BaseServlet {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return;
 			}
-			try {
-				int productId = Integer.parseInt(request.getParameter("productId"));
-				Product product = productDAO.selectById(productId);
-				
-				if(product == null) throw new CartException("Product not found");
-				
-				cartService.addToCart(loggedInUser, product, 1);
-				
-				request.getSession().setAttribute("message", "Add to cart successfully");
-				
-			} catch (AppException e) {
-				request.getSession().setAttribute("message", e.getMessage());
-			}
-			response.sendRedirect("ProductServlet");
+			
+			int productId = Integer.parseInt(request.getParameter("productId"));
+			Product product = productDAO.selectById(productId);
+			
+			if(product == null) throw new CartException("Product not found");
+			
+			cartService.addToCart(loggedInUser, product, 1);
+			
+			String pageParam = request.getParameter("page");
+
+		    int page = 1;
+
+		    if(pageParam != null){
+		        page = Integer.parseInt(pageParam);
+		    }
+
+
+		    session.setAttribute("message", "Add to cart successfully!");
+
+		    response.sendRedirect("ProductServlet?page=" + page);
 			return;
 			
 		}else {
