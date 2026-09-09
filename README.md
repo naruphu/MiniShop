@@ -4,6 +4,20 @@
 
 A backend-focused e-commerce web application built with Java Servlet, JSP, Hibernate ORM and MySQL.
 
+## 🌐 Live Demo
+
+👉 [MiniShop Live Demo](https://minishop-pyrm.onrender.com)
+
+## 🔑 Demo Accounts
+
+### Admin
+- Username: `admin`
+- Password: `admin123`
+
+### Customer
+- Username: `customer`
+- Password: `customer123`
+
 This project demonstrates:
 - MVC architecture
 - Layered backend design
@@ -537,25 +551,6 @@ CREATE DATABASE minishop;
 5. **Run the application using Apache Tomcat 9.**
 
 6. **Access:** http://localhost:8080/minishop
-
-7. Demo Accounts
-
-### Customer Account
-
-**Username:**
-john
-
-**Password:**
-123456
-
-
-### Admin Account
-
-**Username:**
-naruphu
-
-**Password:**
-Naruphu777
 
 
 # 🚀 Future Improvements
