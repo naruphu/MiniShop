@@ -212,7 +212,7 @@ public class ProductDAO implements Dao<Product, Integer> {
 	        .openSession();
 
 
-	        String hql = "FROM Product p";
+	        String hql = "FROM Product p WHERE 1=1";
 	        if(keyword != null && !keyword.trim().isEmpty()) {
 	            hql += " AND p.name LIKE :keyword";
 	        }
