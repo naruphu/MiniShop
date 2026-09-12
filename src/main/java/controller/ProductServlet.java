@@ -135,7 +135,14 @@ public class ProductServlet extends BaseServlet {
 		        page = Integer.parseInt(pageParam);
 		    }
 		    
-		    int totalPages = productService.getTotalPages(keyword, categoryId);
+		    int totalPages;
+
+		    if(RoleUtils.isAdmin(loggedInUser)){
+		        totalPages = productService.getTotalPagesForAdmin(keyword, categoryId);
+		    }
+		    else{
+		        totalPages = productService.getTotalPages(keyword, categoryId);
+		    }
 
 
 

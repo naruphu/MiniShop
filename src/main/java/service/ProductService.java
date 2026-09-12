@@ -97,6 +97,15 @@ public class ProductService {
 	    );
 
 	}
+	public int getTotalPagesForAdmin(String keyword,Integer categoryId){
+
+	    int pageSize = 8;
+
+	    long total =
+	        productDAO.countProducts(keyword, categoryId);
+
+	    return (int)Math.ceil((double)total/pageSize);
+	}
 	
 	public Product getProductById(int id){
 		return productDAO.selectById(id);
